@@ -7,10 +7,10 @@ GRAVITY = 0.98;
 let gameLaunch = false;
 let launchX = 300;
 let launchY = 300;
-let brickMerge = false;
+let foodMerge = false;
 let distance = 0;
-// Create a brick object
-let brick = {
+// Create a food block
+let food = {
     x: 300,
     y: 300,
     width: 20,
@@ -23,11 +23,12 @@ let brick = {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     },
-
+    //instant poop  --need to look like it consumes the food.
     drawMerge: function() {
         this.color = hippo.color;
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        // this.velocityY = 0;
     }
 
 };
@@ -45,54 +46,55 @@ let hippo = {
     }
 };
 
-// Game loop
-function gameLoop() {
+//update the game loop
+function update() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!gameLaunch){
 
 
-            // Math.abs((launchY - brick.y),2)/100
+            // Math.abs((launchY - food.y),2)/100
     }
 
-    distance = Math.sqrt(Math.pow(brick.x -launchX,2) + Math.pow(brick.y - launchY,2))
+    distance = Math.sqrt(Math.pow(food.x -launchX,2) + Math.pow(food.y - launchY,2))
 
     if (gameLaunch) {
-        if (brick.y < canvas.height && gameLaunch){
-            brick.velocityY += GRAVITY;
-            brick.y += brick.velocityY;
+        if (food.y < canvas.height && gameLaunch){
+            food.velocityY += GRAVITY;
+            food.y += food.velocityY;
 
         }
-        brick.x += brick.velocityX;
-        console.log("brick.velocityX", "brick.velocityY")
-        console.log(brick.velocityX, brick.velocityY)
-        // brick.x += 20;
+        food.x += food.velocityX;
+        console.log("food.velocityX", "food.velocityY")
+        console.log(food.velocityX, food.velocityY)
+        // food.x += 20;
         // Check for collision with the hippo
-        if (brick.x + brick.width > hippo.x && brick.x < hippo.x + hippo.width && brick.y + brick.height > hippo.y && brick.y < hippo.y + hippo.height) {
-            brick.velocityY = 0;
-            brick.velocityX = 0;
-            brickMerge = true;
+        if (food.x + food.width > hippo.x && food.x < hippo.x + hippo.width && food.y + food.height > hippo.y && food.y < hippo.y + hippo.height) {
+            food.velocityY = 0;
+            food.velocityX = 0;
+            foodMerge = true;
         }
     }
-    if (!brickMerge){
-        brick.draw();
+    if (!foodMerge){
+        food.draw();
     } else {
-        brick.drawMerge();
+        food.drawMerge();
     }
 
-    // if (brick.y > canvas.height)
+    // if (food.y > canvas.height)
     hippo.draw();
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(update);
 }
 
+//check mouse up event
 addEventListener('mouseup', (event) => {
 
-    if (event.clientX < brick.x && event.clientY > brick.y && !gameLaunch) {
-        brick.x = event.clientX;
-        brick.y = event.clientY;
+    if (event.clientX < food.x && event.clientY > food.y && !gameLaunch) {
+        food.x = event.clientX;
+        food.y = event.clientY;
 
-        brick.velocityY = (launchY - brick.y)/6;
-        brick.velocityX = -(brick.x - launchX)/6;
+        food.velocityY = (launchY - food.y)/6;
+        food.velocityX = -(food.x - launchX)/6;
         gameLaunch = true;
     }
 
@@ -100,7 +102,7 @@ addEventListener('mouseup', (event) => {
 });
 // Start the game
 function startGame() {
-    gameLoop();
+    update();
 }
 
 
