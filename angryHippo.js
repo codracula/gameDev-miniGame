@@ -1,3 +1,6 @@
+// Jeep Naarkom
+// feed the angry hippo - mini game prototype
+
 const canvas = document.getElementById("gameworld");
 const ctx = canvas.getContext("2d");
 GRAVITY = 0.98;
@@ -14,7 +17,7 @@ let brick = {
     height: 20,
     velocityX: 0,
     velocityY: 0,
-    color: "red",
+    color: "green",
 
     draw: function() {
         ctx.fillStyle = this.color;
@@ -22,20 +25,20 @@ let brick = {
     },
 
     drawMerge: function() {
-        this.color = 'green'
+        this.color = hippo.color;
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
 };
 
-// Create a block object
-let block = {
+// Create the hippo
+let hippo = {
     x: canvas.width - 50,
-    y: canvas.height / 2,
+    y: 300,
     width: 50,
     height: 50,
-    color: "green",
+    color: "#9F8676",
     draw: function() {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -47,8 +50,8 @@ function gameLoop() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!gameLaunch){
-        brick.velocityX = 2;
-        brick.velocityY = launchY - brick.y;
+
+
             // Math.abs((launchY - brick.y),2)/100
     }
 
@@ -64,8 +67,8 @@ function gameLoop() {
         console.log("brick.velocityX", "brick.velocityY")
         console.log(brick.velocityX, brick.velocityY)
         // brick.x += 20;
-        // Check for collision with the block
-        if (brick.x + brick.width > block.x && brick.x < block.x + block.width && brick.y + brick.height > block.y && brick.y < block.y + block.height) {
+        // Check for collision with the hippo
+        if (brick.x + brick.width > hippo.x && brick.x < hippo.x + hippo.width && brick.y + brick.height > hippo.y && brick.y < hippo.y + hippo.height) {
             brick.velocityY = 0;
             brick.velocityX = 0;
             brickMerge = true;
@@ -78,7 +81,7 @@ function gameLoop() {
     }
 
     // if (brick.y > canvas.height)
-    block.draw();
+    hippo.draw();
     requestAnimationFrame(gameLoop);
 }
 
@@ -87,6 +90,9 @@ addEventListener('mouseup', (event) => {
     if (event.clientX < brick.x && event.clientY > brick.y && !gameLaunch) {
         brick.x = event.clientX;
         brick.y = event.clientY;
+
+        brick.velocityY = (launchY - brick.y)/6;
+        brick.velocityX = -(brick.x - launchX)/6;
         gameLaunch = true;
     }
 
@@ -96,3 +102,7 @@ addEventListener('mouseup', (event) => {
 function startGame() {
     gameLoop();
 }
+
+
+// 500 + Math.random()*(canvas.width/2),
+// Math.random()*canvas.height - 50,
