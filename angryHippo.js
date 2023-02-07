@@ -3,12 +3,17 @@
 
 const canvas = document.getElementById("gameworld");
 const ctx = canvas.getContext("2d");
-GRAVITY = 0.98;
+let gravity = 0.98;
+let gravityBool = true;
 let gameLaunch = false;
+let levelComplete = false;
+let level = 1;
 let launchX = 300;
 let launchY = 300;
 let foodMerge = false;
 let distance = 0;
+let totalFood = 5;
+let currentLvl = 1;
 // Create a food block
 let food = {
     x: 300,
@@ -35,8 +40,9 @@ let food = {
 
 // Create the hippo
 let hippo = {
-    x: canvas.width - 50,
-    y: 300,
+
+    x: 500 + Math.random()*(canvas.width/2),
+    y: Math.random()*canvas.height/2,
     width: 50,
     height: 50,
     color: "#9F8676",
@@ -45,10 +51,30 @@ let hippo = {
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 };
+let menu = {
+    draw: function() {
+        ctx.font = "normal 40px Irish Grover";
+        ctx.fillStyle = '#FFA200'
+        ctx.fillText("Level:", 20, 40);
+        ctx.fillText(level + " ", 125, 40);
+        ctx.fillText("Food:", 20, 80);
+        ctx.fillText(totalFood + " ", 125, 80);
 
+    }
+}
+let gravityCtrl = {
+    gravityOn: function (){
+        gravity = 0.98;
+    },
+    gravityOff: function (){
+        gravity = 0;
+    }
+}
 //update the game loop
 function update() {
-
+    // while(totalFood > 0){
+    //
+    // }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!gameLaunch){
 
@@ -60,11 +86,11 @@ function update() {
 
     if (gameLaunch) {
         if (food.y < canvas.height && gameLaunch){
-            food.velocityY += GRAVITY;
+            food.velocityY += gravity;
             food.y += food.velocityY;
-
+            food.x += food.velocityX;
         }
-        food.x += food.velocityX;
+
         console.log("food.velocityX", "food.velocityY")
         console.log(food.velocityX, food.velocityY)
         // food.x += 20;
@@ -73,16 +99,23 @@ function update() {
             food.velocityY = 0;
             food.velocityX = 0;
             foodMerge = true;
+
+            gravityCtrl.gravityOff()
+            levelComplete = true;
+
         }
     }
-    if (!foodMerge){
-        food.draw();
-    } else {
-        food.drawMerge();
+    if (totalFood){
+        if (!foodMerge){
+            food.draw();
+        } else {
+            food.drawMerge();
+        }
     }
 
     // if (food.y > canvas.height)
     hippo.draw();
+    menu.draw();
     requestAnimationFrame(update);
 }
 
@@ -96,15 +129,17 @@ addEventListener('mouseup', (event) => {
         food.velocityY = (launchY - food.y)/6;
         food.velocityX = -(food.x - launchX)/6;
         gameLaunch = true;
+        totalFood--;
     }
 
     console.log(launchX, launchY);
 });
 // Start the game
 function startGame() {
+
     update();
+
+    console.log(totalFood);
 }
 
 
-// 500 + Math.random()*(canvas.width/2),
-// Math.random()*canvas.height - 50,
