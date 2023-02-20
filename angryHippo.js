@@ -65,13 +65,13 @@ let wall = new Sprite({
 
 // Create the hippo
 let hippo = new Sprite({
-    sprite: './img/hippo.png',
+    sprite: './img/hippo2.png',
     position: {
-        x: 800 + Math.random()*(canvas.width/4),
+        x: 700 + Math.random()*(canvas.width/4),
         y: Math.random()*canvas.height/2
     },
     scale: 0.2,
-    frameTotal: 2
+    frameTotal: 1
 })
 
 let menu = {
@@ -139,9 +139,6 @@ function motionUpdate() {
                         && food.position.y < wall.position.y + wall.height) {
             food.velocityY = 0;
             food.velocityX *= -1/2;
-            if (food.velocityX = 0){
-                food.velocityX = -2;
-            }
         }
     }
 }
@@ -162,13 +159,13 @@ function lvlReset() {
         frameWidth: 259
     });
     hippo = new Sprite({
-        sprite: './img/hippo.png',
+        sprite: './img/hippo2.png',
         position: {
-            x: 800 + Math.random()*(canvas.width/4),
+            x: 700 + Math.random()*(canvas.width/4),
             y: Math.random()*canvas.height/2
         },
         scale: 0.2,
-        frameTotal: 2
+        frameTotal: 1
     })
     wall = new Sprite({
         sprite: './img/wall2.png',
@@ -214,12 +211,14 @@ function update() {
 
         } else if (currentFood == 0 && keys.z.pressed) {
             hippoFed = 0;
+            currentLvl = 0;
             resetFood();
             lvlReset();
         }
     }
     if (currentFood == 0 && keys.z.pressed) {
         hippoFed = 0;
+        currentLvl = 0;
         resetFood();
         lvlReset();
     }

@@ -18,8 +18,8 @@ class Sprite {
     draw() {
         ctx.drawImage(  //image, sx,sy, swidth, sheight, dx, dy, dwidth, dheight)
             this.image,
-            0,
-            0,
+            this.x,
+            this.y,
             this.image.width / this.frameTotal,
             this.image.height,
             this.position.x,
