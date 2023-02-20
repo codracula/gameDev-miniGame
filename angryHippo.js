@@ -67,8 +67,8 @@ let wall = new Sprite({
 let hippo = new Sprite({
     sprite: './img/hippo2.png',
     position: {
-        x: 700 + Math.random()*(canvas.width/4),
-        y: Math.random()*canvas.height/2
+        x: 700 + Math.random()*(canvas.width/3),
+        y: Math.random()*(canvas.height -150)
     },
     scale: 0.2,
     frameTotal: 1
@@ -161,8 +161,8 @@ function lvlReset() {
     hippo = new Sprite({
         sprite: './img/hippo2.png',
         position: {
-            x: 700 + Math.random()*(canvas.width/4),
-            y: Math.random()*canvas.height/2
+            x: 700 + Math.random()*(canvas.width/3),
+            y: Math.random()*(canvas.height -150)
         },
         scale: 0.2,
         frameTotal: 1
