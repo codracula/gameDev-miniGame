@@ -19,8 +19,11 @@ let currentLvl = 1;
 let hippoX = 0;
 let hippoY = 0;
 
+function resetFood(){
+    currentFood = TOTALFOOD;
+}
 // Create a food block
-const food = new Sprite({
+let food = new Sprite({
     sprite: './img/food.png',
     position:  {
         x: 300,
@@ -30,14 +33,8 @@ const food = new Sprite({
     frameTotal: 4,
     frameHeight: 262,
     frameWidth: 259
-    // velocity: {
-    //     x: 0,
-    //     Y: 0
-    // }
 });
 
-// food.velocityX = 5;
-// food.velocity.x= 20;
 console.log(food);
 
 const bg = new Sprite({
@@ -59,7 +56,7 @@ const sling = new Sprite({
     scale: 1
 });
 
-const wall = new Sprite({
+let wall = new Sprite({
     sprite: './img/wall2.png',
     position: {
         x: 600,
@@ -68,81 +65,16 @@ const wall = new Sprite({
     scale: 1
 });
 
-// const theMenu = new Menu()
-// {
-//     x: 300,
-//     y: 300,
-//     width: 20,
-//     height: 20,
-//     velocityX: 0,
-//     velocityY: 0,
-//     color: "green",
-//
-//     draw: function() {
-//         ctx.fillStyle = this.color;
-//         ctx.fillRect(this.x, this.y, this.width, this.height);
-//     },
-//     //instant poop  --need to look like it consumes the food.
-//     drawMerge: function() {
-//         this.color = hippo.colorHappy;
-//         ctx.fillStyle = this.color;
-//         ctx.fillRect(this.x, this.y, this.width, this.height);
-//         // this.velocityY = 0;
-//     }
-//
-// };
-
 // Create the hippo
-let hippo = {
-
-    x: 800 + Math.random()*(canvas.width/4),
-    y: Math.random()*canvas.height/2,
-    width: 50,
-    height: 50,
-    color: "#E66901",
-    colorHappy: "#77B446",
-    draw: function() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+let hippo = new Sprite({
+    sprite: './img/hippo.png',
+    position: {
+        x: 800 + Math.random()*(canvas.width/4),
+        y: Math.random()*canvas.height/2
     },
-    drawHappy: function() {
-
-        ctx.fillStyle = this.colorHappy;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-};
-
-
-
-// let block = {
-//     x: 650,
-//     y: 50+ Math.random()*canvas.height/3,
-//     width: 50,
-//     height: 180,
-//     velocityX: 0,
-//     velocityY: 0,
-//     color: "#6B6C84",
-//
-//     draw: function() {
-//         ctx.fillStyle = this.color;
-//         ctx.fillRect(this.x, this.y, this.width, this.height);
-//     }
-//
-// };
-
-// let sling = new {
-//     x: 300,
-//     y: 320,
-//     width: 75,
-//     height: 200,
-//     color: "#6B6C84",
-//
-//     draw: function() {
-//         ctx.fillStyle = this.color;
-//         ctx.fillRect(this.x, this.y, this.width, this.height);
-//     }
-//
-// };
+    scale: 0.2,
+    frameTotal: 2
+})
 
 let menu = {
     draw: function() {
@@ -157,14 +89,14 @@ let menu = {
         if (currentFood <= 0){
             ctx.fillStyle = '#C52929'
             ctx.fillText("Game Over", 20, 160);
+            ctx.fillStyle = '#8800C2'
+            ctx.fillText("Press z to continue", 20, 200);
         }
-        //press space bar to contiinue between each shot
+        //press space bar to continue between each shot
         if (currentFood > 0 && (levelComplete || oobY)){
             ctx.fillStyle = '#8800C2'
-            ctx.fillText("Press space to continue", 20, 160);
+            ctx.fillText("Press z to continue", 20, 160);
         }
-
-
     }
 }
 
@@ -190,10 +122,11 @@ function motionUpdate() {
             oobY = true;  //add out of bound Y to true;
         }
 
-        if (food.position.x + food.width > hippo.x
-                        && food.position.x < hippo.x + hippo.width
-                        && food.position.y + food.height > hippo.y
-                        && food.position.y < hippo.y + hippo.height) {
+        if (food.position.x + food.width > hippo.position.x
+                        && food.position.x < hippo.position.x + hippo.width
+                        && food.position.y + food.height > hippo.position.y
+                        && food.position.y < hippo.position.y + hippo.height
+                        && !levelComplete) {
             food.velocityY = 0;
             food.velocityX = 0;
             foodMerge = true;
@@ -208,51 +141,84 @@ function motionUpdate() {
                         && food.position.y < wall.position.y + wall.height) {
             food.velocityY = 0;
             food.velocityX *= -1/2;
+            if (food.velocityX = 0){
+                food.velocityX = -2;
+            }
 
-            // gravityCtrl.gravityOff()
-            // levelComplete = true;
         }
     }
 }
 
-function gameObjectDraw() {
-
-    // menu.draw();
-    // block.draw();
-    // sling.update();
-    // hippo.draw();
-    // food.update();
-    // if (!foodMerge){
-    // } else if (foodMerge){
-    //     hippo.drawHappy();
-    //     food.drawMerge()
-    // }
+function foodReset() {
+    food.velocityX = 0;
+    food.velocityY = 0;
+    gravityCtrl.gravityOff();
+    food = new Sprite({
+        sprite: './img/food.png',
+        position:  {
+            x: 300,
+            y: 300
+        },
+        scale: 0.2,
+        frameTotal: 4,
+        frameHeight: 262,
+        frameWidth: 259
+    });
+    hippo = new Sprite({
+        sprite: './img/hippo.png',
+        position: {
+            x: 800 + Math.random()*(canvas.width/4),
+            y: Math.random()*canvas.height/2
+        },
+        scale: 0.2,
+        frameTotal: 2
+    })
+    wall = new Sprite({
+        sprite: './img/wall2.png',
+        position: {
+            x: 600,
+            y: 50+ Math.random()*canvas.height/3
+        },
+        scale: 1
+    });
+    levelComplete = false;
+    gameLaunch = false;
+    oobY = false;
+    // console.log("stuck here");
 }
 
 function gameInit(){
-    hippoX = hippo.x;
-    hippoY = hippo.y;
+    hippoX = hippo.position.x;
+    hippoY = hippo.position.y;
 }
 
 //update the game loop
 function update() {
     motionUpdate();
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
     bg.update()
     sling.update()
     wall.update()
     menu.draw()
     hippo.draw()
     food.update()
-    // if (!levelComplete){
-    //     motionUpdate()
-    //     // gameObjectDraw()
-    // }
+
     //add condition to restart the lvl if game is completed or out of bound
     if (levelComplete || oobY){
         console.log("waiting for key z");
+        console.log("current food", currentFood);
+        console.log("z keys", keys.z.pressed);
+        if (currentFood > 0 && keys.z.pressed) {
+            console.log("execute food reset");
+            foodReset()
 
-        // gameObjectDraw()
+        }
+        // else if (currentFood = 0 && keys.z.pressed) {
+        //     console.log("execute game reset");
+        //     foodReset();
+        //     hippoFed = 0;
+        //     resetFood();
+        // }
+
     }
 
     //check distance ---not currently in use
@@ -309,8 +275,17 @@ addEventListener('mouseover', (event) =>{
 
 addEventListener('keydown',(event) => {
     switch (event.key) {
-        case 'space':
+        case 'z':
             keys.z.pressed = true;
+            break;
+    }
+    // console.log(event.key);
+});
+
+addEventListener('keyup',(event) => {
+    switch (event.key) {
+        case 'z':
+            keys.z.pressed = false;
             break;
     }
     // console.log(event.key);
