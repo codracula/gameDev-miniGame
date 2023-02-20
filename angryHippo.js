@@ -1,5 +1,5 @@
 // Jeep Naarkom
-// feed the angry hippo - mini game prototype
+// feed the angry hippo - mini game
 
 const canvas = document.getElementById("gameworld");
 const ctx = canvas.getContext("2d");
@@ -16,8 +16,6 @@ let distance = 0;
 const TOTALFOOD = 5;
 let currentFood = TOTALFOOD;
 let currentLvl = 1;
-let hippoX = 0;
-let hippoY = 0;
 
 function resetFood(){
     currentFood = TOTALFOOD;
@@ -100,7 +98,7 @@ let menu = {
     }
 }
 
-//turn gravity on off
+//turn gravity on and off
 let gravityCtrl = {
     gravityOn: function (){
         gravity = 0.98;
@@ -144,12 +142,11 @@ function motionUpdate() {
             if (food.velocityX = 0){
                 food.velocityX = -2;
             }
-
         }
     }
 }
 
-function foodReset() {
+function lvlReset() {
     food.velocityX = 0;
     food.velocityY = 0;
     gravityCtrl.gravityOff();
@@ -184,12 +181,6 @@ function foodReset() {
     levelComplete = false;
     gameLaunch = false;
     oobY = false;
-    // console.log("stuck here");
-}
-
-function gameInit(){
-    hippoX = hippo.position.x;
-    hippoY = hippo.position.y;
 }
 
 //update the game loop
@@ -203,24 +194,35 @@ function update() {
     food.update()
 
     //add condition to restart the lvl if game is completed or out of bound
-    if (levelComplete || oobY){
+    if (levelComplete){
         console.log("waiting for key z");
         console.log("current food", currentFood);
         console.log("z keys", keys.z.pressed);
+
         if (currentFood > 0 && keys.z.pressed) {
             console.log("execute food reset");
-            foodReset()
-
+            lvlReset()
+            currentLvl++;
+            resetFood()
         }
-        // else if (currentFood = 0 && keys.z.pressed) {
-        //     console.log("execute game reset");
-        //     foodReset();
-        //     hippoFed = 0;
-        //     resetFood();
-        // }
-
+        //missing condition that if the lvl complete but currentfood = 0
     }
+    if (oobY){
+        if (currentFood > 0 && keys.z.pressed) {
+            console.log("execute food reset");
+            lvlReset()
 
+        } else if (currentFood == 0 && keys.z.pressed) {
+            hippoFed = 0;
+            resetFood();
+            lvlReset();
+        }
+    }
+    if (currentFood == 0 && keys.z.pressed) {
+        hippoFed = 0;
+        resetFood();
+        lvlReset();
+    }
     //check distance ---not currently in use
     distance = Math.sqrt(Math.pow(food.position.x -LAUNCHX,2)
                             + Math.pow(food.position.y - LAUNCHY,2))
@@ -262,9 +264,6 @@ const keys = {
     }
 }
 
-//draw a line between points
-
-
 addEventListener('mouseover', (event) =>{
     if (0 < event.clientX && event.clientX < food.position.x
         && event.clientY > food.position.y) {
@@ -279,7 +278,6 @@ addEventListener('keydown',(event) => {
             keys.z.pressed = true;
             break;
     }
-    // console.log(event.key);
 });
 
 addEventListener('keyup',(event) => {
@@ -288,12 +286,10 @@ addEventListener('keyup',(event) => {
             keys.z.pressed = false;
             break;
     }
-    // console.log(event.key);
 });
 
 // Start the game
 function startGame() {
-    // gameInit();
     update();
     console.log(currentFood);
 }
