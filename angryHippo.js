@@ -3,6 +3,7 @@
 
 const canvas = document.getElementById("gameworld");
 const ctx = canvas.getContext("2d");
+let highScore = 0;
 let hippoFed = 0;
 let gravity = 0.98;
 let gameLaunch = false;
@@ -77,23 +78,28 @@ let hippo = new Sprite({
 let menu = {
     draw: function() {
         ctx.font = "normal 40px Irish Grover";
-        ctx.fillStyle = '#8800C2'
-        ctx.fillText("Hippos fed:", 20, 40);
-        ctx.fillText(hippoFed + " ", 290, 40);
-        ctx.fillText("Level:", 20, 80);
-        ctx.fillText(currentLvl + " ", 125, 80);
-        ctx.fillText("Food:", 20, 120);
-        ctx.fillText(currentFood + " ", 125, 120);
-        if (currentFood <= 0 && oobY){
+        ctx.fillStyle = '#82554C'
+        ctx.fillText("High Score:", 20, 40);
+        ctx.fillText(highScore + " ", 290, 40);
+        ctx.fillText("Hippos fed:", 20, 80);
+        ctx.fillText(hippoFed + " ", 290, 80);
+        ctx.fillText("Level:", 20, 120);
+        ctx.fillText(currentLvl + " ", 125, 120);
+        ctx.fillText("Food:", 20, 160);
+        ctx.fillText(currentFood + " ", 125, 160);
+        if (currentFood == 0 && oobY){
             ctx.fillStyle = '#C52929'
-            ctx.fillText("Game Over", 20, 160);
-            ctx.fillStyle = '#8800C2'
+            ctx.fillText("Game Over", 20, 200);
+            ctx.fillStyle = '#82554C'
+            ctx.fillText("Press z to continue", 20, 240);
+        } else if (currentFood == 0 && levelComplete) {
+            ctx.fillStyle = '#82554C'
             ctx.fillText("Press z to continue", 20, 200);
         }
         //press space bar to continue between each shot
         if (currentFood > 0 && (levelComplete || oobY)){
-            ctx.fillStyle = '#8800C2'
-            ctx.fillText("Press z to continue", 20, 160);
+            ctx.fillStyle = '#82554C'
+            ctx.fillText("Press z to continue", 20, 200);
         }
     }
 }
@@ -131,14 +137,18 @@ function motionUpdate() {
             gravityCtrl.gravityOff();
             levelComplete = true;
             hippoFed++;
+            if (hippoFed > highScore) {
+                highScore = hippoFed;
+            }
+
         }
 
         if (food.position.x + food.width > wall.position.x
                         && food.position.x < wall.position.x + wall.width
                         && food.position.y + food.height > wall.position.y
                         && food.position.y < wall.position.y + wall.height) {
-            food.velocityY = 0;
-            food.velocityX *= -1/2;
+            food.velocityY += .5;
+            food.velocityX *= -0.5;
         }
     }
 }
@@ -192,41 +202,33 @@ function update() {
 
     //add condition to restart the lvl if game is completed or out of bound
     if (levelComplete){
-        console.log("waiting for key z");
-        console.log("current food", currentFood);
-        console.log("z keys", keys.z.pressed);
 
-        if (currentFood > 0 && keys.z.pressed) {
-            console.log("execute food reset");
+        if (keys.z.pressed){
             lvlReset()
             currentLvl++;
             resetFood()
         }
-        //missing condition that if the lvl complete but currentfood = 0
     }
     if (oobY){
         if (currentFood > 0 && keys.z.pressed) {
-            console.log("execute food reset");
             lvlReset()
-
+            // currentFood--;
         } else if (currentFood == 0 && keys.z.pressed) {
             hippoFed = 0;
             currentLvl = 0;
+            // currentFood--;
             resetFood();
             lvlReset();
         }
     }
     if (currentFood == 0 && keys.z.pressed) {
-        hippoFed = 0;
-        currentLvl = 0;
-        resetFood();
-        lvlReset();
+
     }
     //check distance ---not currently in use
     distance = Math.sqrt(Math.pow(food.position.x -LAUNCHX,2)
                             + Math.pow(food.position.y - LAUNCHY,2))
 
-    console.log("foodX", food.position.x, "foodY", food.position.y, "ooby", oobY, "lvlcmpt", levelComplete);
+    // console.log("foodX", food.position.x, "foodY", food.position.y, "ooby", oobY, "lvlcmpt", levelComplete);
     requestAnimationFrame(update);
 }
 
@@ -254,6 +256,7 @@ addEventListener('mouseup', (event) => {
     console.log(LAUNCHX, LAUNCHY);
     console.log('eventclient', event.clientX, event.clientY);
     console.log('food velocity', food.velocityX, food.velocityY);
+    console.log('cabbage launched');
 });
 
 //key boolean mapping
