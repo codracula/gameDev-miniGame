@@ -84,7 +84,7 @@ let menu = {
         ctx.fillText(currentLvl + " ", 125, 80);
         ctx.fillText("Food:", 20, 120);
         ctx.fillText(currentFood + " ", 125, 120);
-        if (currentFood <= 0){
+        if (currentFood <= 0 && oobY){
             ctx.fillStyle = '#C52929'
             ctx.fillText("Game Over", 20, 160);
             ctx.fillStyle = '#8800C2'
